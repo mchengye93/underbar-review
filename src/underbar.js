@@ -112,7 +112,7 @@
     var temp = [];
     var uniq = [];
 
-    if(!isSorted) {
+    if (!isSorted) {
       for (var i = 0; i < array.length; i++) {
         if (res.indexOf(array[i]) === -1) {
           res.push(array[i]);
@@ -283,12 +283,12 @@
     for (var i = 0; i < arguments.length; i++) {
       var current = arguments[i];
       for (var key in current) {
-        if(obj[key] === undefined){
+        if (obj[key] === undefined) {
           obj[key] = current[key];
         }
       }
     }
-      return obj;
+    return obj;
   };
 
 
@@ -332,6 +332,19 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+  var storage = {};
+  
+  return function () {
+    var args = JSON.stringify(arguments);
+    if (storage[args] === undefined) {
+        storage[args] = func.apply(this,arguments);
+    }
+    
+    return storage[args];
+  
+  };
+  
+  
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -341,6 +354,12 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+
+    var args = Array.from(arguments).slice(2);
+   
+    return setTimeout(function(){
+    func.apply(this,args);
+    }, wait);
   };
 
 
@@ -356,8 +375,7 @@
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
     var copy = array.slice();
-    var temp;
-    var swapIdx;
+    var temp, swapIdx;
     var currentIdx = array.length - 1;
     
     while (currentIdx) {
