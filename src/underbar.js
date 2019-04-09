@@ -56,12 +56,12 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
-    if (Array.isArray(collection)){
+    if (Array.isArray(collection)) {
       for(var i = 0; i < collection.length; i++){
         iterator(collection[i], i, collection);
       }
     } else {
-      for(var key in collection){
+      for(var key in collection) {
         iterator(collection[key], key, collection);
       }  
     }
@@ -101,10 +101,42 @@
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    return _.filter(collection, function(value){
+      return !test(value);
+    });
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    var res = [];
+    var temp = [];
+    var uniq = [];
+
+    if(!isSorted){
+      for(var i = 0; i < array.length; i++) {
+        if(res.indexOf(array[i]) === -1){
+          res.push(array[i]);
+        }
+      }
+    return res;
+
+    } else {
+      for(var i = 0; i < array.length; i++) {
+        temp.push(iterator(array[i]));
+
+    }
+    
+      for(var i = 0; i < temp.length; i++) {
+        if(res.indexOf(temp[i]) === -1){
+          res.push(temp[i]);
+          uniq.push(array[i]);
+        }
+      
+      }
+      return uniq;
+    
+    }
+    
   };
 
 
@@ -113,6 +145,12 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+    var mapResult = [];
+    _.each(collection, function(value, key, collection){
+      mapResult.push(iterator(value, key, collection));
+    });
+    
+    return mapResult;
   };
 
   /*
@@ -154,6 +192,20 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    
+    var initialization = arguments.length === 2;
+
+    _.each(collection, function(value){
+      if (initialization) {
+        accumulator = value;
+        initialization = false;
+      } else {
+        accumulator = iterator(accumulator, value);
+      }
+    });
+
+    return accumulator;
+    
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -172,6 +224,14 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    iterator = iterator || _.identity;
+    
+    return !!_.reduce(collection, function(trueSoFar, value){
+        return trueSoFar && iterator(value);
+    }, true);
+    
+    
+    
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
@@ -271,6 +331,21 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var copy = array.slice();
+    var temp;
+    var swapIdx;
+    var currentIdx = array.length - 1;
+    
+    while(currentIdx) {
+      swapIdx = Math.floor(Math.random() * currentIdx);
+      currentIdx--;
+
+      temp = copy[currentIdx];
+      copy[currentIdx] = copy[swapIdx];
+      copy[swapIdx] = temp;
+
+    }
+    return copy;
   };
 
 
