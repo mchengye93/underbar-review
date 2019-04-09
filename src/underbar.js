@@ -332,17 +332,17 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
-  var storage = {};
-  
-  return function () {
-    var args = JSON.stringify(arguments);
-    if (storage[args] === undefined) {
-        storage[args] = func.apply(this,arguments);
-    }
+    var storage = {};
     
-    return storage[args];
-  
-  };
+    return function () {
+      var args = JSON.stringify(arguments);
+      if (storage[args] === undefined) {
+        storage[args] = func.apply(this, arguments);
+      }
+      
+      return storage[args];
+    
+    };
   
   
   };
@@ -358,7 +358,7 @@
     var args = Array.from(arguments).slice(2);
    
     return setTimeout(function(){
-    func.apply(this,args);
+      func.apply(this, args);
     }, wait);
   };
 
